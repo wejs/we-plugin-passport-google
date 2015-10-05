@@ -2,7 +2,7 @@
   "name": "we-plugin-passport-google",
   "description": "We.js we-plugin-passport-google plugin",
   "version": "0.3.0",
-  "main": "lib/index.js",
+  "main": "plugin.js",
   "scripts": {
     "test": "NODE_ENV=test LOG_LV=info ./node_modules/.bin/mocha test/bootstrap.js test/**/*.test.js",
     "prepublish": "npm prune"
@@ -23,6 +23,18 @@
   },
   "publishConfig": {
     "registry": "http://registry.npmjs.org"
+  },
+  "keywords": [
+    "we.js",
+    "wejs",
+    "plugin",
+    "oauth",
+    "google",
+    "passport"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:wejs/we-plugin-passport-google.git"
   },
   "license": "MIT"
 }
