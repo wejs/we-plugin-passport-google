@@ -5,7 +5,7 @@
 ## How to install
 
 ```sh
-npm install we-plugin-passport-google --save
+we i we-plugin-passport-google 
 ```
 
 ## How to configure

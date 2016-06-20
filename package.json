@@ -1,28 +1,20 @@
 {
   "name": "we-plugin-passport-google",
-  "description": "We.js we-plugin-passport-google plugin",
-  "version": "0.3.0",
+  "description": "We.js google authentication strategy plugin",
+  "version": "1.0.0",
   "main": "plugin.js",
-  "scripts": {},
   "dependencies": {
     "passport-google-oauth": "^0.2.0"
   },
-  "devDependencies": {},
-  "publishConfig": {
-    "registry": "http://registry.npmjs.org"
-  },
   "author": "Alberto Souza <contato@albertosouza.net>",
   "keywords": [
-    "we.js",
-    "wejs",
-    "plugin",
-    "oauth",
-    "google",
-    "passport"
+    "wejs-plugin"
   ],
-  "repository": {
-    "type": "git",
-    "url": "git@github.com:wejs/we-plugin-passport-google.git"
-  },
-  "license": "MIT"
+  "repository": "wejs/we-plugin-passport-google",
+  "license": "MIT",
+  "wejs": {
+    "dependencies": {
+      "we-plugin-auth": true
+    }
+  }
 }
