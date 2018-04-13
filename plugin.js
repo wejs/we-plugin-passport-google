@@ -4,7 +4,7 @@
  * see http://wejs.org/docs/we/extend.plugin
  */
 module.exports = function loadPlugin(projectPath, Plugin) {
-  var plugin = new Plugin(__dirname);
+  const plugin = new Plugin(__dirname);
   // set plugin configs
   plugin.setConfigs({
     passport: {
@@ -23,17 +23,17 @@ module.exports = function loadPlugin(projectPath, Plugin) {
           // but you can change it in config/local.js
           callbackURL: null,
           session: true,
-          findUser:   function(token, tokenSecret, profile, done) {
-            var we = this.we;
+          findUser(token, tokenSecret, profile, done) {
+            const we = this.we;
             // get email
-            var email;
-            for (var i = 0; i < profile.emails.length; i++) {
+            let email;
+            for (let i = 0; i < profile.emails.length; i++) {
               if (profile.emails[i].type == 'account') {
                 email = profile.emails[i].value;
                 break;
               }
             }
-            var query = {
+            let query = {
               where: { email: email },
               defaults: {
                 displayName: profile.displayName,
@@ -41,6 +41,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
                 acceptTerms: true,
                 active: true,
                 email: email,
+                googleId: profile.id,
                 confirmEmail: email
               }
             };
@@ -51,12 +52,37 @@ module.exports = function loadPlugin(projectPath, Plugin) {
               query.defaults.gender = 'F';
             }
 
-            we.db.models.user.findOrCreate(query).spread(function (user, created){
-              if (created) we.log.info('New user from google oauth2', user.id);
+            we.db.models.user
+            .findOrCreate(query)
+            .spread( (user, created)=> {
+              if (created) {
+                we.log.info('New user from google oauth2', user.id);
+              } else if(!user.active) {
+                // need email validation
+                we.log.info('G:User inactive trying to login:', user.id);
+                done('user.inactive.cant.login', null);
+                return null;
+              } else if(user.blocked) {
+                we.log.info('G:User blocked trying to login:', user.id);
+                done('user.blocked.cant.login', null);
+                return null;
+              }
+
+              if (!user.googleId) {
+                user.googleId = profile.id;
+                return user.save()
+                .then( ()=> {
+                  done(null, user);
+                  return null;
+                });
+              }
+
               // TODO download and save user picture from google API
 
-              return done(null, user);
-            }).catch(done);
+              done(null, user);
+              return null;
+            })
+            .catch(done);
           }
         }
       }
@@ -86,9 +112,9 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       we.config.passport.strategies.google &&
       !we.config.passport.strategies.google.callbackURL
     ) {
-      we.config.passport.strategies.google.callbackURL = we.config.hostname+'/auth/google/callback'
+      we.config.passport.strategies.google.callbackURL = we.config.hostname+'/auth/google/callback';
     }
-  })
+  });
 
   return plugin;
 };

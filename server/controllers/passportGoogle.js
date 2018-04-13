@@ -1,5 +1,5 @@
 module.exports = {
-  page: function(req, res, next) {
+  page(req, res, next) {
     req.we.passport.authenticate('google', {
       scope: [
         'https://www.googleapis.com/auth/plus.me',
@@ -7,9 +7,9 @@ module.exports = {
       ]
     })(req, res, next);
   },
-  callback: function(req, res) {
+  callback(req, res) {
     req.we.passport
-    .authenticate('google', { failureRedirect: '/login' })(req, res, function (err) {
+    .authenticate('google', { failureRedirect: '/login' })(req, res, (err)=> {
       if (err) {
         req.we.log.error('we-plugin-passport-google: Error on authenticate with google.strategy:', err);
         res.addMessage('error', 'auth.oauth.error');
@@ -19,4 +19,4 @@ module.exports = {
       res.goTo('/');
     });
   }
-}
+};
