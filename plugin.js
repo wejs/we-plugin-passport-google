@@ -24,6 +24,9 @@ module.exports = function loadPlugin(projectPath, Plugin) {
           session: true,
           findUser(token, tokenSecret, profile, done) {
             const we = this.we;
+
+            we.log.verbose('profile from google:', profile);
+
             // get email
             let email;
             for (let i = 0; i < profile.emails.length; i++) {
@@ -69,8 +72,11 @@ module.exports = function loadPlugin(projectPath, Plugin) {
 
               return user.save()
               .then( ()=> {
-                done(null, user);
-                return null;
+                plugin.saveUserAvatar(profile, user, we, (err, image)=> {
+                  done(null, user);
+                  if (image) user.avatar = [image];
+                  return null;
+                });
               });
             })
             .catch(done);
@@ -106,6 +112,33 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       we.config.passport.strategies.google.callbackURL = we.config.hostname+'/auth/google/callback';
     }
   });
+
+  plugin.saveUserAvatar = function(profile, user, we, cb) {
+    const plf = we.plugins['we-plugin-file-local'];
+    if (!plf) return cb();
+
+    if (user && user.avatar && user.avatar.length) return cb();
+
+    if (!profile.photos && !profile.photos[0]) return cb();
+
+    const uU = plf.urlUploader;
+    const url = profile.photos[0].value.replace('sz=50', 'sz=250');
+
+    uU.uploadFromUrl(url, we, (err, image)=> {
+      if (err) return cb(err);
+      image.setCreator(user.id)
+      .then( ()=> {
+        user.avatar = [image];
+        return user.save();
+      })
+      .then( ()=> {
+        we.log.verbose('new image:', image.get());
+        cb(null, image);
+        return null;
+      });
+    });
+
+  };
 
   return plugin;
 };
