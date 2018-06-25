@@ -14,7 +14,6 @@ module.exports = function loadPlugin(projectPath, Plugin) {
           // url to image icon
           icon: '/public/plugin/we-plugin-passport-google/files/images/g-logo.png',
           authUrl: '/auth/google',
-
           // get a clientID and clientSecret in google api console,
           // for docs see https://github.com/jaredhanson/passport-google-oauth
           clientID: null,
@@ -57,30 +56,22 @@ module.exports = function loadPlugin(projectPath, Plugin) {
             .spread( (user, created)=> {
               if (created) {
                 we.log.info('New user from google oauth2', user.id);
-              } else if(!user.active) {
-                // need email validation
-                we.log.info('G:User inactive trying to login:', user.id);
-                done('user.inactive.cant.login', null);
-                return null;
               } else if(user.blocked) {
                 we.log.info('G:User blocked trying to login:', user.id);
                 done('user.blocked.cant.login', null);
                 return null;
               }
 
-              if (!user.googleId) {
-                user.googleId = profile.id;
-                return user.save()
-                .then( ()=> {
-                  done(null, user);
-                  return null;
-                });
-              }
+              // activate user with google auth...
+              if(!user.active) user.active = true;
+              // set google Id if not set:
+              if (!user.googleId) user.googleId = profile.id;
 
-              // TODO download and save user picture from google API
-
-              done(null, user);
-              return null;
+              return user.save()
+              .then( ()=> {
+                done(null, user);
+                return null;
+              });
             })
             .catch(done);
           }
