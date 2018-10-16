@@ -70,6 +70,9 @@ module.exports = function loadPlugin(projectPath, Plugin) {
               // set google Id if not set:
               if (!user.googleId) user.googleId = profile.id;
 
+              if (!user.displayName) user.displayName = profile.displayName;
+              if (!user.fullName) user.fullName = profile.fullName;
+
               return user.save()
               .then( ()=> {
                 plugin.saveUserAvatar(profile, user, we, (err, image)=> {

@@ -2,6 +2,8 @@ module.exports = {
   page(req, res, next) {
     req.we.passport.authenticate('google', {
       scope: [
+        'profile',
+        'email',
         'https://www.googleapis.com/auth/plus.me',
         'https://www.googleapis.com/auth/userinfo.email'
       ]
