@@ -71,7 +71,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
               if (!user.googleId) user.googleId = profile.id;
 
               if (!user.displayName) user.displayName = profile.displayName;
-              if (!user.fullName) user.fullName = profile.fullName;
+              if (!user.fullName) user.fullName = profile.displayName;
 
               return user.save()
               .then( ()=> {
