@@ -1,7 +1,7 @@
 {
   "name": "we-plugin-passport-google",
   "description": "We.js google authentication strategy plugin",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "main": "plugin.js",
   "dependencies": {
     "passport-google-oauth": "^2.0.0"
