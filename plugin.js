@@ -42,6 +42,10 @@ module.exports = function loadPlugin(projectPath, Plugin) {
               }
             }
 
+            if (!email && profile.emails[0] && profile.emails[0].verified == true) {
+              email = profile.emails[0].value;
+            }
+
             if (!email) {
               return done('we-plugin-passport-goole:auth:email not found');
             }
