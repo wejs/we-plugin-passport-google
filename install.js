@@ -17,13 +17,11 @@ module.exports = {
           if (err.name == 'SequelizeDatabaseError') {
             if (err.message == `Duplicate column name 'googleId'`) {
               // fields already exists, nothing to do:
-              done();
-              return null;
+              return done();
             }
           }
 
           done(err); // unknow error
-          return null;
         });
       }
     }];

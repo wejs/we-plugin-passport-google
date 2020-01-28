@@ -25,16 +25,27 @@ module.exports = function loadPlugin(projectPath, Plugin) {
           findUser(token, tokenSecret, profile, done) {
             const we = this.we;
 
-            we.log.verbose('profile from google:', profile);
+            we.log.verbose('profile from google:', {
+              profile,
+            });
 
             // get email
             let email;
+
             for (let i = 0; i < profile.emails.length; i++) {
-              if (profile.emails[i].type == 'account') {
+              if (
+                profile.emails[i].type == 'account' ||
+                profile.emails[i].type == 'ACCOUNT'
+              ) {
                 email = profile.emails[i].value;
                 break;
               }
             }
+
+            if (!email) {
+              return done('we-plugin-passport-goole:auth:email not found');
+            }
+
             let query = {
               where: { email: email },
               defaults: {
@@ -61,8 +72,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
                 we.log.info('New user from google oauth2', user.id);
               } else if(user.blocked) {
                 we.log.info('G:User blocked trying to login:', user.id);
-                done('user.blocked.cant.login', null);
-                return null;
+                return done('user.blocked.cant.login', null);
               }
 
               // activate user with google auth...
@@ -76,9 +86,8 @@ module.exports = function loadPlugin(projectPath, Plugin) {
               return user.save()
               .then( ()=> {
                 plugin.saveUserAvatar(profile, user, we, (err, image)=> {
-                  done(null, user);
                   if (image) user.avatar = [image];
-                  return null;
+                  done(null, user);
                 });
               });
             })
@@ -104,7 +113,7 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     }
   });
 
-  // use the bootstrap evento to set default auth callback
+  // use the bootstrap event to set default auth callback
   plugin.events.on('we:after:load:express', function(we) {
     if (
       we.config.passport &&
@@ -125,7 +134,9 @@ module.exports = function loadPlugin(projectPath, Plugin) {
     if (!profile.photos && !profile.photos[0]) return cb();
 
     const uU = plf.urlUploader;
-    const url = profile.photos[0].value.replace('sz=50', 'sz=250');
+    const url = profile.photos[0].value
+      .replace('sz=50', 'sz=250')
+      .replace('s50', 's250');
 
     uU.uploadFromUrl(url, we, (err, image)=> {
       if (err) return cb(err);
@@ -137,7 +148,6 @@ module.exports = function loadPlugin(projectPath, Plugin) {
       .then( ()=> {
         we.log.verbose('new image:', image.get());
         cb(null, image);
-        return null;
       });
     });
 

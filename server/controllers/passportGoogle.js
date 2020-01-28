@@ -13,7 +13,9 @@ module.exports = {
     req.we.passport
     .authenticate('google', { failureRedirect: '/login' })(req, res, (err)=> {
       if (err) {
-        req.we.log.error('we-plugin-passport-google: Error on authenticate with google.strategy:', err);
+        req.we.log.error('we-plugin-passport-google: Error on authenticate with google.strategy:', {
+          error: err
+        });
         res.addMessage('error', 'auth.oauth.error');
       }
 
