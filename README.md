@@ -25,6 +25,8 @@ To configure in your project update the file: `config/locals.js` :
       google: {
         clientID: 'your google api client id',
         clientSecret: 'your google api client secret',
+        redirectUrlAfterSuccess: '/',
+        redirectUrlAfterFailure: '/login',        
         // scope: [
         //   'profile',
         //   'email',
