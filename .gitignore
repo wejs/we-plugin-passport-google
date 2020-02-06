@@ -4,6 +4,5 @@ coverage
 config
 *.log
 
-package-lock.json
 yarn.lock
 yarn-error.lock

@@ -18,13 +18,19 @@ The client id and client secret needed to authenticate with Google can be set up
 
 To configure in your project update the file: `config/locals.js` :
 
-```js
+```
 // ...
   passport: {
     strategies: {
       google: {
         clientID: 'your google api client id',
         clientSecret: 'your google api client secret',
+        // scope: [
+        //   'profile',
+        //   'email',
+        //   'https://www.googleapis.com/auth/plus.me',
+        //   'https://www.googleapis.com/auth/userinfo.email'
+        // ],
         // callbackURL: 'a custom callback url' // optional
       }
     }

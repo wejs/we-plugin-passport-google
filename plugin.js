@@ -18,6 +18,10 @@ module.exports = function loadPlugin(projectPath, Plugin) {
           // for docs see https://github.com/jaredhanson/passport-google-oauth
           clientID: null,
           clientSecret: null,
+          scope: null,
+          // redirect configurations:
+          redirectUrlAfterSuccess: '/',
+          redirectUrlAfterFailure: '/login',
           // callbackURL is automaticaly set to we.config.hostname+'/auth/google/callback'
           // but you can change it in config/local.js
           callbackURL: null,
